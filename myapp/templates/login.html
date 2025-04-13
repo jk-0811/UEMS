@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle at top, #0f0f1a, #000);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #00f0ff;
+        }
+
+        .login-container {
+            background: rgba(15, 15, 30, 0.85);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 25px #00f0ff88;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00f0ff;
+            text-shadow: 0 0 8px #00f0ff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #00e0ff;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #00f0ff;
+            border-radius: 8px;
+            background: transparent;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            box-shadow: 0 0 8px #00f0ff44;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+            color: #aaa;
+        }
+
+        button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #00f0ff;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s;
+            box-shadow: 0 0 12px #00f0ff;
+        }
+
+        button:hover {
+            background: #0ff;
+            transform: scale(1.05);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        p {
+            color: #ff0066;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 0 0 5px #ff0066;
+        }
+    </style>
+    <!-- Optional: futuristic font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <label>Username:</label>
+            <input type="text" name="username" placeholder="Enter your username" required>
+
+            <label>Password:</label>
+            <input type="password" name="password" placeholder="Enter your password" required>
+
+            <input type="hidden" name="login_type" id="loginTypeInput">
+
+            <div class="button-container">
+                <button type="submit" onclick="setLoginType('user')">User Login</button>
+                <button type="submit" onclick="setLoginType('admin')">Admin Login</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function setLoginType(type) {
+            document.getElementById('loginTypeInput').value = type;
+        }
+    </script>
+</body>
+</html>

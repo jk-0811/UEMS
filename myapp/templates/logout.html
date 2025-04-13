@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="logout-container">
+    <h2 class="glow-text">You have been logged out</h2>
+    <p class="glow-sub">Redirecting you to the dashboard...</p>
+    <p class="glow-sub">
+<a href="{% url 'dashboard' %}" class="redirect-link">click here</a>.
+    </p>
+</div>
+
+<script>
+    setTimeout(() => {
+        window.location.href = "{% url 'dashboard' %}";
+    }, 2000); // Redirect after 2 seconds
+</script>
+
+<style>
+    .logout-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 70vh;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 40px;
+        border-radius: 15px;
+        margin: 60px auto;
+        width: 60%;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .glow-text {
+        color: #0ff;
+        font-size: 2rem;
+        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+
+    .glow-sub {
+        color: #ccc;
+        margin-top: 10px;
+    }
+
+    .redirect-link {
+        color: #0ff;
+        font-weight: bold;
+        text-decoration: none;
+        border-bottom: 1px solid #0ff;
+    }
+
+    .redirect-link:hover {
+        text-shadow: 0 0 5px #0ff;
+    }
+</style>
+{% endblock %}

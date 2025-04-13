@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #fff;
+    }
+
+    #contact {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    h2, h3 {
+      color: #00c3ff;
+      margin-bottom: 15px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .box {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 195, 255, 0.2);
+      text-align: left;
+    }
+
+    form input,
+    form textarea,
+    form button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #00c3ff;
+      background: #0d1117;
+      color: white;
+      outline: none;
+    }
+
+    form textarea {
+      height: 120px;
+      resize: none;
+    }
+
+    form button {
+      background: #00c3ff;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    form button:hover {
+      background: #0077b6;
+      transform: scale(1.05);
+    }
+
+    .contact-map iframe {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 12px;
+    }
+
+    .contact-details p {
+      margin: 8px 0;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 768px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<section id="contact">
+  <h2>Reach out to Us</h2>
+
+  <div class="contact-grid">
+    <!-- Contact Form -->
+    <div class="box">
+      <h3>Contact Form</h3>
+      <form id="contactForm">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="tel" name="mobile" placeholder="Your Mobile Number" required pattern="[0-9]{10}">
+        <textarea name="message" placeholder="Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <!-- Google Map -->
+    <div class="box contact-map">
+      <h3>Our Location</h3>
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.984276336993!2d-74.00601568538462!3d40.71277614828256!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a1784b9e5d9%3A0x4f4a535e0e3df18!2sJNTU-GV%20COLLEGE%20OF%20ENGINEERING!5e0!3m2!1sen!2sus!4v1617280257934!5m2!1sen!2sus" 
+        loading="lazy" allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="box contact-details">
+      <h3>Contact Information</h3>
+      <p><strong>📍 Address:</strong> Vizianagaram, Andhra Pradesh - 535003</p>
+      <p><strong>📧 Email:</strong> info@example.com</p>
+      <p><strong>📞 Phone:</strong> xxxxxxxxxxx</p>
+    </div>
+  </div>
+</section>
+
+<script>
+document.getElementById("contactForm").onsubmit = function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+
+  fetch("{% url 'contact' %}", {
+    method: "POST",
+    body: formData,
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+      "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+    }
+  })
+  .then(res => res.json())
+  .then(data => alert(data.message))
+  .catch(err => console.error("Error:", err));
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register for {{ event_name }}</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0d0d0d;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: 50px auto;
+      padding: 30px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.3);
+    }
+
+    h1 { color: cyan; }
+
+    form { display: flex; flex-direction: column; text-align: left; }
+
+    label {
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 6px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    input:focus {
+      outline: none;
+      border: 2px solid cyan;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .input-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: cyan;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    button {
+      background: cyan;
+      color: black;
+      font-weight: bold;
+      padding: 16px;
+      font-size: 18px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover { background: white; }
+
+    .back-links {
+      margin-top: 25px;
+    }
+
+    .back-links a {
+      color: cyan;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .back-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #111;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px cyan;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .modal-content h2 { color: cyan; margin-bottom: 20px; }
+
+    .modal-content button {
+      background: cyan;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .modal-content button:hover { background: white; }
+  </style>
+
+  <script>
+    const togglePasswordVisibility = (id, iconId) => {
+      const input = document.getElementById(id);
+      const icon = document.getElementById(iconId);
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      icon.innerText = show ? "👁️" : "👁️‍🗨️";
+    };
+
+    const getCSRFToken = () => document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const goToLogin = () => window.location.href = "{% url 'login' %}";
+
+    window.onload = () => {
+      const form = document.getElementById("registrationForm");
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        const errorText = document.getElementById("error-message");
+        errorText.innerText = "";
+
+        const formData = new FormData(form);
+        if (formData.get("password") !== formData.get("confirm_password")) {
+          errorText.innerText = "Passwords do not match!";
+          return;
+        }
+
+        fetch("{% url 'submit_registration' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": getCSRFToken() },
+          body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            form.reset();
+            document.getElementById("successModal").style.display = "flex";
+            setTimeout(goToLogin, 2000);
+          } else {
+            errorText.innerText = data.error || "Registration failed!";
+          }
+        })
+        .catch(() => errorText.innerText = "Something went wrong.");
+      };
+    };
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <h1>Register for {{ event_name }}</h1>
+  <form id="registrationForm" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="event_name" value="{{ event_name }}">
+
+    <label>Full Name:</label>
+    <input type="text" name="name" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Phone Number:</label>
+    <input type="tel" name="phone" required>
+
+    <label>Password:</label>
+    <div class="input-container">
+      <input type="password" id="password" name="password" required>
+      <span class="toggle-password" id="togglePassword" onclick="togglePasswordVisibility('password', 'togglePassword')">👁️‍🗨️</span>
+    </div>
+
+    <label>Confirm Password:</label>
+    <div class="input-container">
+      <input type="password" id="confirm_password" name="confirm_password" required>
+      <span class="toggle-password" id="toggleConfirmPassword" onclick="togglePasswordVisibility('confirm_password', 'toggleConfirmPassword')">👁️‍🗨️</span>
+    </div>
+
+    <p id="error-message" class="error"></p>
+    <button type="submit">Submit Registration</button>
+  </form>
+
+  <div class="back-links">
+    <a href="{% url 'login' %}">Have an account? Login...</a>
+  </div>
+</div>
+
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <h2>Registration Successful 🎉</h2>
+    <p>You can now log in to your account.</p>
+    <button onclick="goToLogin()">Go to Login</button>
+  </div>
+</div>
+
+</body>
+</html>

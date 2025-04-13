@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Upcoming Events{% endblock %}
+
+{% block content %}
+<a href="{% url 'dashboard' %}" class="dashboard-link">Go to Dashboard</a>
+
+<section class="events">
+  <h2>Upcoming Events</h2>
+
+  <div class="event-container">
+    {% if events %}
+      {% for event in events %}
+        <div class="event-card">
+          <h3>{{ event.title }}</h3>
+          <p>{{ event.date }}</p>
+          <p class="countdown" id="countdown{{ forloop.counter }}"></p>
+          <a href="{{ event.link }}">
+            <button class="register-btn">Register</button>
+          </a>
+        </div>
+      {% endfor %}
+    {% else %}
+      <!-- Static fallback cards -->
+      <div class="event-card">
+        <h3>Tech Conference</h3>
+        <p>March 20, 2026</p>
+        <p class="countdown" id="countdown1"></p>
+        <a href="{% url 'conference' %}">
+          <button class="register-btn">Register</button>
+        </a>
+      </div>
+
+      <div class="event-card">
+        <h3>AI Workshop</h3>
+        <p>March 25, 2026</p>
+        <p class="countdown" id="countdown2"></p>
+        <a href="{% url 'ai_workshop' %}">
+          <button class="register-btn">Register</button>
+        </a>
+      </div>
+
+      <div class="event-card">
+        <h3>ChatBot Workshop</h3>
+        <p>March 30, 2026</p>
+        <p class="countdown" id="countdown3"></p>
+        <a href="{% url 'chatbot_workshop' %}">
+          <button class="register-btn">Register</button>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .dashboard-link {
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    margin: 20px 0;
+    color: #00ffcc;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .dashboard-link:hover { color: #ffcc00; }
+
+  .events { text-align: center; padding: 20px; }
+
+  .event-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .event-card {
+    background: #1e1e1e;
+    padding: 20px;
+    width: 280px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 255, 204, 0.2);
+    transition: transform 0.3s ease-in-out;
+    text-align: center;
+  }
+
+  .event-card:hover { transform: scale(1.05); }
+
+  .register-btn {
+    background: #00ffcc;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .register-btn:hover { background: #ffcc00; }
+
+  .countdown {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffcc00;
+  }
+
+  @media (max-width: 768px) {
+    .event-container { flex-direction: column; align-items: center; }
+  }
+</style>
+
+<script>
+  const countdowns = [
+    { id: "countdown1", date: "March 20, 2026 00:00:00" },
+    { id: "countdown2", date: "March 25, 2026 00:00:00" },
+    { id: "countdown3", date: "March 30, 2026 00:00:00" },
+  ];
+
+  function startCountdown(targetDate, elementId) {
+    const countDownDate = new Date(targetDate).getTime();
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const dist = countDownDate - now;
+
+      if (dist <= 0) {
+        clearInterval(interval);
+        el.textContent = "Event Live Now!";
+        return;
+      }
+
+      const d = Math.floor(dist / (1000 * 60 * 60 * 24));
+      const h = Math.floor((dist / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((dist / (1000 * 60)) % 60);
+      const s = Math.floor((dist / 1000) % 60);
+      el.textContent = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+  }
+
+  countdowns.forEach(c => startCountdown(c.date, c.id));
+</script>
+{% endblock %}
